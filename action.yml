@@ -1,0 +1,11 @@
+name: 'QA auto label'
+description: 'Auto add label to a pr'
+author: 'Guilherme Gazzo'
+inputs:
+  configuration-path:
+    description: 'config file path'
+    required: true
+    default: '.github/auto-label-action-config.json'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
