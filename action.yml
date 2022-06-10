@@ -1,0 +1,11 @@
+name: 'No JS File'
+description: 'Prevent new JS files on pull requests'
+author: 'Guilherme Gazzo'
+inputs:
+  configuration-path:
+    description: 'config file path'
+    required: true
+    default: '.github/no-js-action-config.json'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
