@@ -590,7 +590,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@octokit/action@^3.11.1":
+"@octokit/action@^3.18.1":
   version "3.18.1"
   resolved "https://registry.yarnpkg.com/@octokit/action/-/action-3.18.1.tgz#dcf92887d18e98599ec9f02e9937b80745271143"
   integrity sha512-jl88CBdtk7SE1Jwpxtf5k24XkUCcrUhQfsKNxMWFg4hdzge8o+aEYytrx1X7DwXwOYpuezNXVa03hK/zizt4Dg==
