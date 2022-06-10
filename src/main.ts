@@ -63,16 +63,29 @@ async function getJSON(repoPath: string) {
     });
 
     if (
-      labels.every((label) => originalLabels.includes(label)) ||
-      (config.ignore &&
+      (labels.length === originalLabels.length &&
+        labels.every((label) => originalLabels.includes(label))) ||
+      (config.ignore?.length &&
         !response.data.some((label) => config.ignore.includes(label.name)))
     ) {
-      core.info('Auto Label: nothing to do here');
+      core.info(`Auto Label: nothing to do here - [${originalLabels.join()}]`);
+      return;
+    }
+
+    if (
+      config.ignore?.length &&
+      !response.data.some((label) => config.ignore.includes(label.name))
+    ) {
+      core.info(
+        `Auto Label: igored - [${originalLabels.join()}] [${
+          config.ignore?.join() || 'none'
+        }]`
+      );
       return;
     }
 
     core.info(
-      `Auto Label: updating from ${originalLabels.join()} to ${labels.join()}`
+      `Auto Label: updating from [${originalLabels.join()}] to [${labels.join()}]`
     );
 
     await octokit.request(
