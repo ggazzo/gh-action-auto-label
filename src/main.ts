@@ -41,20 +41,47 @@ async function getJSON(repoPath: string) {
       }
     );
 
+    const originalLabels = response.data.map((label) => label.name);
+    const tested = Boolean(originalLabels.includes('stat: QA tested'));
+    const skipped = Boolean(originalLabels.includes('stat: QA skipped'));
+
+    const labels: string[] = [
+      ...new Set([...originalLabels, 'stat: needs QA', 'stat: ready to merge']),
+    ].filter((label) => {
+      if (label === 'stat: needs QA') {
+        return !(skipped || tested);
+      }
+
+      if (label === 'stat: QA skipped') {
+        return !tested && skipped;
+      }
+
+      if (label === 'stat: ready to merge') {
+        return skipped || tested;
+      }
+      return true;
+    });
+
     if (
-      config.ignore &&
-      !response.data.some((label) => config.ignore.includes(label.name))
+      labels.every((label) => originalLabels.includes(label)) ||
+      (config.ignore &&
+        !response.data.some((label) => config.ignore.includes(label.name)))
     ) {
       core.info('Auto Label: nothing to do here');
+      return;
     }
 
+    core.info(
+      `Auto Label: updating from ${originalLabels.join()} to ${labels.join()}`
+    );
+
     await octokit.request(
-      'POST /repos/{owner}/{repo}/issues/{issue_number}/labels',
+      'PUT /repos/{owner}/{repo}/issues/{issue_number}/labels',
       {
         owner,
         repo,
         issue_number: Number(issue_number),
-        labels: ['stat: needs QA'],
+        labels,
       }
     );
   } catch (error) {
